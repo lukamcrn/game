@@ -1,0 +1,62 @@
+import pygame
+from game import Game
+pygame.init()
+
+
+pygame.display.set_caption("Destroy him")
+screen = pygame.display.set_mode((625,556))
+
+background = pygame.image.load('game/bg1.jpg')
+
+game = Game()
+
+
+
+running = True
+
+while running:
+
+    screen.blit(background,(0,0))
+
+    screen.blit(game.warrior.image, game.warrior.rect)
+    screen.blit(game.shooter.image, game.shooter.rect)
+
+    game.warrior.update_health_bar(screen)
+    game.shooter.update_health_bar(screen)
+
+    for projectile in game.warrior.all_projectile:
+      projectile.move()
+
+
+
+    game.warrior.all_projectile.draw(screen)
+
+
+
+    if game.pressed.get(pygame.K_RIGHT) and game.shooter.rect.x + game.warrior.rect.width < screen.get_width():
+        game.shooter.move_right()
+    elif game.pressed.get(pygame.K_LEFT) and game.shooter.rect.x > 15:
+        game.shooter.move_left()
+
+    if game.pressed.get(pygame.K_q) and game.shooter.rect.x + game.warrior.rect.width < screen.get_width():
+        game.warrior.move_left()
+    elif game.pressed.get(pygame.K_d) and game.shooter.rect.x > 15:
+        game.warrior.move_right()
+
+    pygame.display.flip()
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+           running = False
+           pygame.quit()
+
+        elif event.type == pygame.KEYDOWN:
+            game.pressed[event.key] = True
+
+            if event.key == pygame.K_SPACE:
+                game.shooter.launch_laser()
+            if event.key == pygame.K_RETURN:
+                game.warrior.launch_lance()
+
+        elif event.type == pygame.KEYUP:
+            game.pressed[event.key] = False
